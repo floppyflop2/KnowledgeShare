@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataLayer;
+using DataModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KnowledgeShare.Controllers
@@ -10,12 +12,21 @@ namespace KnowledgeShare.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        
+        private IPodDbManager PodDbManager { get; set; }
+
+        public ValuesController(IPodDbManager podDbManager)
+        {
+            PodDbManager = podDbManager;
+        }
+
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var values = new string[] { "value1", "value2" };
+            values.Append(PodDbManager.GetPod().Name);
+            return Ok(values);
         }
 
         // GET api/values/5
@@ -29,6 +40,7 @@ namespace KnowledgeShare.Controllers
         [HttpPost]
         public void Post([FromBody] string value)
         {
+            PodDbManager.AddPod(new Pod { Id = new Guid(), Name = value });
         }
 
         // PUT api/values/5
