@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataLayer;
 using DataModel;
+using KnowledgeShare.NewFolder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DiagnosticAdapter.Internal;
 
 namespace KnowledgeShare.Controllers
 {
@@ -24,9 +26,8 @@ namespace KnowledgeShare.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            var values = new string[] { "value1", "value2" };
-            values.Append(PodDbManager.GetPod().Name);
-            return Ok(values);
+            var pod = PodDbManager.GetPod();
+            return Ok(pod);
         }
 
         // GET api/values/5
@@ -38,15 +39,24 @@ namespace KnowledgeShare.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] ApiPod value)
         {
-            PodDbManager.AddPod(new Pod { Id = new Guid(), Name = value });
+            try
+            {
+                PodDbManager.AddPod(PodMapper.PodApi2Pod(value));
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(Guid id, [FromBody] ApiPod value)
         {
+
         }
 
         // DELETE api/values/5

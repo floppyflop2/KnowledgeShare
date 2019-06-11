@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DataModel;
 
@@ -6,22 +7,23 @@ namespace DataLayer
 {
     public class PodDbManager : IPodDbManager
     {
-        private KSDbContext DBContext { get; }
+        private readonly KSDbContext KsDbContext;
 
         public PodDbManager(KSDbContext dbContext)
         {
-            DBContext = dbContext;
+            KsDbContext = dbContext;
         }
 
-        public Pod GetPod()
+        public List<Pod> GetPod()
         {
-            return DBContext.Pods.First();
+            var pod = KsDbContext.PodKnowledge.ToList();
+            return pod;
         }
 
         public void AddPod(Pod entity)
         {
-            DBContext.Add(entity);
-            DBContext.SaveChanges();
+            KsDbContext.PodKnowledge.Add(entity);
+            KsDbContext.SaveChanges();
         }
     }
 }

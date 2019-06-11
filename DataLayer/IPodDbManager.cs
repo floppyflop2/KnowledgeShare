@@ -7,7 +7,7 @@ namespace DataLayer
 {
     public interface IPodDbManager
     {
-        Pod GetPod();
+        List<Pod> GetPod();
         void AddPod(Pod entity);
     }
 }
